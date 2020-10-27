@@ -785,6 +785,11 @@ public class BinlogReader extends AbstractReader {
             logger.debug("DDL '{}' was filtered out of processing", sql);
             return;
         }
+        // Received DML 'DELETE FROM `trubendorffer`.`behandelingverzamelingggz`' for processing, binlog probably contains events generated with statement or mixed based replication format
+        if (upperCasedStatementBegin.equals("DELETE ")) {
+            logger.debug("DDL '{}' ends up in the mariadb-transaction-log, ignoring for now", sql);
+            return;
+        }
         if (upperCasedStatementBegin.equals("INSERT ") || upperCasedStatementBegin.equals("UPDATE ") || upperCasedStatementBegin.equals("DELETE ")) {
             throw new ConnectException(
                     "Received DML '" + sql + "' for processing, binlog probably contains events generated with statement or mixed based replication format");
